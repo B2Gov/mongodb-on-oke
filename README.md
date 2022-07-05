@@ -7,10 +7,10 @@
 
 The following implementation is based on: 
 
-[Mongodb Kubernetes Operator](https://www.mongodb.com/docs/kubernetes-operator/master/tutorial/install-k8s-operator/)
-[MongoDB Github Documentation](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/README.md)
-[Community Edition Implementation Details](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/docs/deploy-configure.md)
-[Storage Support](https://github.com/mongodb/mongodb-kubernetes-operator/issues/961)
+- [Mongodb Kubernetes Operator](https://www.mongodb.com/docs/kubernetes-operator/master/tutorial/install-k8s-operator/)
+- [MongoDB Github Documentation](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/README.md)
+- [Community Edition Implementation Details](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/docs/deploy-configure.md)
+- [Storage Support](https://github.com/mongodb/mongodb-kubernetes-operator/issues/961)
 
 
 ---
