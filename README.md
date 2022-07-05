@@ -2,6 +2,7 @@
 
 - [MongoDB on OKE](#mongodb-on-oke)
   - [Implementation](#implementation)
+  - [Secret usage](#secret-usage)
 
 
 The following implementation is based on: 
@@ -9,6 +10,7 @@ The following implementation is based on:
 [Mongodb Kubernetes Operator](https://www.mongodb.com/docs/kubernetes-operator/master/tutorial/install-k8s-operator/)
 [MongoDB Github Documentation](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/README.md)
 [Community Edition Implementation Details](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/docs/deploy-configure.md)
+[Storage Support])(https://github.com/mongodb/mongodb-kubernetes-operator/issues/961)
 
 
 ---
@@ -56,12 +58,45 @@ TEST SUITE: None
 4. From operator repo, get file [cr.yaml](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/config/samples/mongodb.com_v1_mongodbcommunity_cr.yaml) and update it with your passwords. Define password in line 36 and apply. Name this `01_mongodb.yaml`
 
 ```shell
+kubectl apply -f 00_secret.yaml
+secret/my-user-password created
+
 kubectl apply -f 01_mongodb.yaml 
 mongodbcommunity.mongodbcommunity.mongodb.com/example-mongodb created
-secret/my-user-password created
+
 ```
 
-5. To get details of required strings, execute script `get_mongo_data.sh` as follows: 
+**NOTE**
+
+1. Each mongodb node uses two block storages. One for logs and one for data. To customize these sizes, update the following, in file `01_mongodb.yaml`: 
+
+```yaml
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: oci-bv
+            resources:
+              requests:
+                storage: 67G
+        - metadata:
+            name: logs-volume
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            storageClassName: oci-bv
+            resources:
+              requests:
+                storage: 52G  
+```
+2. The secret created under yaml `00_secret.yaml` can be safely discarded. It is only needed at the beginning as initial condition for creating this. It can be safely added into `.gitinore` 
+
+---
+
+## Secret usage
+
+1. To get details of required strings, execute script `get_mongo_data.sh` as follows: 
 
 
 `./get_mongo_data.sh example-mongodb admin my-user mongodbdatabase`
@@ -82,3 +117,17 @@ For this example:
    | `<metadata.name>` | Name of the MongoDB database resource. | `example-mongodb` |
    | `<auth-db>` | [Authentication database](https://www.mongodb.com/docs/manual/core/security-users/#std-label-user-authentication-database) where you defined the database user. | `admin` |
    | `<username>` | Username of the database user. | `my-user` |
+
+
+2. If you want to use the secrets to connect to MongoDB from inside the pod, add the following entry on your env init
+
+```yaml
+containers:
+ - name: test-app
+   env:
+    - name: "CONNECTION_STRING"
+      valueFrom:
+        secretKeyRef:
+          name: <metadata.name>-<auth-db>-<username>
+          key: connectionString.standardSrv
+```
