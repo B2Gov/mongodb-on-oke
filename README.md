@@ -92,6 +92,19 @@ mongodbcommunity.mongodbcommunity.mongodb.com/example-mongodb created
 ```
 2. The secret created under yaml `00_secret.yaml` can be safely discarded. It is only needed at the beginning as initial condition for creating this. It can be safely added into `.gitinore` 
 
+Content of this file is: 
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-user-password
+  namespace: mongodbdatabase
+type: Opaque
+stringData:
+  password: W3lc0m31.
+```
+
 ---
 
 ## Secret usage
