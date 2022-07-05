@@ -9,6 +9,7 @@ The following implementation is based on:
 [Mongodb Kubernetes Operator](https://www.mongodb.com/docs/kubernetes-operator/master/tutorial/install-k8s-operator/)
 [MongoDB Github Documentation](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/README.md)
 [Community Edition Implementation Details](https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/docs/deploy-configure.md)
+[Storage Support])(https://github.com/mongodb/mongodb-kubernetes-operator/issues/961)
 
 
 ---
@@ -59,6 +60,31 @@ TEST SUITE: None
 kubectl apply -f 01_mongodb.yaml 
 mongodbcommunity.mongodbcommunity.mongodb.com/example-mongodb created
 secret/my-user-password created
+```
+
+**NOTE**
+
+Each mongodb node uses two block storages. One for logs and one for data. To customize these sizes, update the following, in file `01_mongodb.yaml`: 
+
+```yaml
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: oci-bv
+            resources:
+              requests:
+                storage: 67G
+        - metadata:
+            name: logs-volume
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            storageClassName: oci-bv
+            resources:
+              requests:
+                storage: 52G  
 ```
 
 5. To get details of required strings, execute script `get_mongo_data.sh` as follows: 
