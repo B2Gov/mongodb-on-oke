@@ -43,14 +43,3 @@ spec:
             resources:
               requests:
                 storage: 52G  
-# the user credentials will be generated from this secret
-# once the credentials are generated, this secret is no longer required
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: my-user-password
-  namespace: mongodbdatabase
-type: Opaque
-stringData:
-  password: W3lc0m31.
